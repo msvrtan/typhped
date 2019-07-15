@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Typhped\Tokenizer;
 
 use Exception;
+use Typhped\Structure\Token\TokenVariable;
 use Typhped\Tokenizer\Manual\Token;
 use Typhped\Tokenizer\Manual\TokenAssignement;
 use Typhped\Tokenizer\Manual\TokenClass;
@@ -14,6 +15,7 @@ use Typhped\Tokenizer\Manual\TokenLNumber;
 use Typhped\Tokenizer\Manual\TokenNamespace;
 use Typhped\Tokenizer\Manual\TokenOpenTag;
 use Typhped\Tokenizer\Manual\TokenString;
+use Typhped\Tokenizer\Manual\TokenStruct;
 use Typhped\Tokenizer\Manual\TokenWhitespace;
 
 /**
@@ -22,7 +24,7 @@ use Typhped\Tokenizer\Manual\TokenWhitespace;
 class ManualTokenizer implements Tokenizer
 {
     /** @var array */
-    private $whitespace = [' ', "\n"];
+    private $whitespace = [' ', "\n", "\t"];
 
     /** @var array */
     private $generic = [';', '{', '}', '(', ')', ','];
@@ -45,6 +47,9 @@ class ManualTokenizer implements Tokenizer
     /** @var string */
     private $code = '';
 
+    /** @var string */
+    private $current = null;
+
     public function __construct()
     {
         $this->delimiters = array_merge($this->whitespace, $this->generic, $this->assignement);
@@ -57,13 +62,13 @@ class ManualTokenizer implements Tokenizer
         $this->endPosition     = strlen($this->code);
         $this->tokens          = [];
 
-        $current = null;
+        $this->current = null;
 
         for ($this->currentPosition = 0; $this->currentPosition < $this->endPosition; ++$this->currentPosition) {
             $char = $this->code[$this->currentPosition];
             if ($this->isDelimiter($char)) {
-                if (null !== $current) {
-                    $this->tokens[] = $this->detect($current);
+                if (null !== $this->current) {
+                    $this->tokens[] = $this->detect($this->current);
                 }
                 if ($this->isGeneric($char)) {
                     $this->tokens[] = new TokenGeneric($char);
@@ -74,13 +79,13 @@ class ManualTokenizer implements Tokenizer
                 } else {
                     throw new Exception('Unrecognized char'.$char);
                 }
-                $current = null;
+                $this->current = null;
             } else {
-                $current .= $char;
+                $this->current .= $char;
             }
         }
-        if (null !== $current) {
-            $this->tokens[] = $this->detect($current);
+        if (null !== $this->current) {
+            $this->tokens[] = $this->detect($this->current);
         }
 
         return new TokenCollection($this->tokens);
@@ -88,14 +93,14 @@ class ManualTokenizer implements Tokenizer
 
     private function processWhitespace(): void
     {
-        $current = null;
+        $this->current = null;
         for (; $this->currentPosition < $this->endPosition; ++$this->currentPosition) {
             $char = $this->code[$this->currentPosition];
 
             if ($this->isWhitespace($char)) {
-                $current .= $char;
+                $this->current .= $char;
             } else {
-                $this->tokens[] = new TokenWhitespace($current);
+                $this->tokens[] = new TokenWhitespace($this->current);
                 --$this->currentPosition;
 
                 return;
@@ -105,6 +110,7 @@ class ManualTokenizer implements Tokenizer
 
     /**
      * @param mixed $input
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function detect($input): Token
     {
@@ -117,12 +123,19 @@ class ManualTokenizer implements Tokenizer
         if ('class' === $input) {
             return new TokenClass();
         }
+        if ('struct' === $input) {
+            return new TokenStruct();
+        }
         if ('declare' === $input) {
             return new TokenDeclare();
         }
 
         if (is_numeric($input)) {
             return new TokenLNumber((int) $input);
+        }
+
+        if (false != preg_match('/^\$(?<name>.*)/', $input, $matches)) {
+            return new TokenVariable($matches['name']);
         }
 
         if (is_string($input)) {

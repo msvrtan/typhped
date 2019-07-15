@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Typhped\Structure\Token;
 
-class TokenName
+use Typhped\Tokenizer\Manual\Token;
+
+class TokenVariable implements Token
 {
     /** @var string */
     private $name;
@@ -14,7 +16,7 @@ class TokenName
         $this->name = $name;
     }
 
-    public function asString(): string
+    public function getName(): string
     {
         return $this->name;
     }

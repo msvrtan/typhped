@@ -25,6 +25,9 @@ class SimpleClassTest extends TestCase
      * @dataProvider provideClassWithInterface
      * @dataProvider provideChildClassWithMultipleInterfaces
      * @dataProvider provideClassWithMultipleInterfaces
+     * @dataProvider provideTwoClassesInOneNamespace
+     * @dataProvider provideThreeClassesInOneNamespace
+     * @dataProvider provideShortClass
      */
     public function testParse(string $code, array $expected): void
     {
@@ -214,6 +217,91 @@ CODE;
                                 new TokenName('\Immutable'),
                             ]
                         ),
+                    ]
+                ),
+            ],
+        ];
+    }
+
+    public function provideTwoClassesInOneNamespace(): Generator
+    {
+        $code = <<<'CODE'
+declare(strict_types=1);
+
+namespace Example; 
+class FirstClass
+{
+}
+class SecondClass
+{
+}
+CODE;
+
+        yield [
+            $code,
+            [
+                StmtDeclare::enforceStrictTypes(),
+                new StmtNamespace(
+                    new TokenName('Example'),
+                    [
+                        new StmtClass(new TokenName('FirstClass'), null, []),
+                        new StmtClass(new TokenName('SecondClass'), null, []),
+                    ]
+                ),
+            ],
+        ];
+    }
+
+    public function provideThreeClassesInOneNamespace(): Generator
+    {
+        $code = <<<'CODE'
+declare(strict_types=1);
+
+namespace Example; 
+class FirstClass
+{
+}
+class SecondClass
+{
+}
+class ThirdClass
+{
+}
+CODE;
+
+        yield [
+            $code,
+            [
+                StmtDeclare::enforceStrictTypes(),
+                new StmtNamespace(
+                    new TokenName('Example'),
+                    [
+                        new StmtClass(new TokenName('FirstClass'), null, []),
+                        new StmtClass(new TokenName('SecondClass'), null, []),
+                        new StmtClass(new TokenName('ThirdClass'), null, []),
+                    ]
+                ),
+            ],
+        ];
+    }
+
+    public function provideShortClass(): Generator
+    {
+        $code = <<<'CODE'
+declare(strict_types=1);
+
+namespace Example; 
+class ShortClass{}
+CODE;
+
+        yield [
+            $code,
+            [
+                StmtDeclare::enforceStrictTypes(),
+                new StmtNamespace(
+                    new TokenName('Example'),
+                    [
+                        new StmtClass(new TokenName('ShortClass'), null, []),
                     ]
                 ),
             ],

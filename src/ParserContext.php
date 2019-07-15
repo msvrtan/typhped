@@ -3,34 +3,50 @@
 declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\PyStringNode;
+use Typhped\Converter\NikicConverter;
+use Typhped\Parser\SimpleParser;
+use Typhped\Printer\NikicPrinter;
+use Typhped\Tokenizer\ManualTokenizer;
+use Typhped\Transpiler\SimpleTranspiler;
+use Webmozart\Assert\Assert;
 
 class ParserContext implements Context
 {
+    /** @var string */
+    private $input = '';
+
+    /** @var string */
+    private $output = '';
+
     /**
      * @Given PHP content is
+     * @Given tyPHPed content is
      */
-    public function phpContentIs(PyStringNode $string): void
+    public function phpContentIs(PyStringNode $input): void
     {
-        echo $string->getRaw();
-        //throw new PendingException($string->getRaw());
+        $this->input = $input->getRaw();
     }
 
     /**
-     * @When parser parses it
+     * @When I convert it
      */
-    public function parserParsesIt(): void
+    public function iConvertIt(): void
     {
-        //throw new PendingException();
+        $transpiler = new SimpleTranspiler(
+            new SimpleParser(new ManualTokenizer()),
+            new NikicConverter(),
+            new NikicPrinter()
+        );
+
+        $this->output = $transpiler->transpile($this->input);
     }
 
     /**
-     * @Then parsed output is:
+     * @Then PHP output is:
      */
-    public function parsedOutputIs(PyStringNode $string): void
+    public function phpOutputIs(PyStringNode $expected): void
     {
-        echo $string->getRaw();
-        //throw new PendingException($string->getRaw());
+        Assert::eq($this->output, $expected->getRaw());
     }
 }

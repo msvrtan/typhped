@@ -18,6 +18,8 @@ class MirkoTest extends TestCase
      */
     public function testNikicParserOutput(string $code): void
     {
+        //$this->markTestSkipped('Skipping for now..');
+
         $parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         try {
             /** @var \PhpParser\Node[] $ast */
@@ -33,6 +35,8 @@ class MirkoTest extends TestCase
 
         $prettyPrinter = new PrettyPrinter\Standard();
         echo $prettyPrinter->prettyPrintFile($ast);
+
+        //var_dump(token_get_all($code));
     }
 
     public function provideCode(): Generator

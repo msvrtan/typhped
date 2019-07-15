@@ -48,5 +48,7 @@ class SimpleClassTest extends TestCase
         yield PhpClassProvider::provideChildClassWithInterfaces();
         yield PhpClassProvider::provideClassWithMultipleInterfaces();
         yield PhpClassProvider::provideChildClassWithMultipleInterfaces();
+        yield PhpClassProvider::provideTwoClassesInOneNamespace();
+        yield PhpClassProvider::provideThreeClassesInOneNamespace();
     }
 }

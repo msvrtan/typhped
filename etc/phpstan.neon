@@ -9,6 +9,9 @@ parameters:
 		validateParameters: true
 		inferPrivatePropertyTypeFromConstructor: true
 	bootstrap: tests/bootstrap.php
+	ignoreErrors:
+	    - '#Cannot access property $name on SimpleXMLElement|null.#'
+	    - '#Instanceof between Typhped\\Structure\\Token\\TokenVariable and Typhped\\Tokenizer\\Manual\\TokenString will always evaluate to false.#'
 	excludes_analyse: []
 includes:
 	- ../vendor/phpstan/phpstan-phpunit/extension.neon

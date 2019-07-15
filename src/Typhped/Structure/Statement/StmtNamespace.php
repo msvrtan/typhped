@@ -20,6 +20,16 @@ class StmtNamespace
         $this->name       = $name;
         $this->statements = $statements;
 
-        Assert::allIsInstanceOf($statements, StmtClass::class);
+        Assert::allIsInstanceOf($statements, StmtStructure::class);
+    }
+
+    public function getNameAsString(): string
+    {
+        return $this->name->asString();
+    }
+
+    public function getStatements(): array
+    {
+        return $this->statements;
     }
 }

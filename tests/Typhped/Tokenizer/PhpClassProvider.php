@@ -294,4 +294,123 @@ CODE;
 
         return [$code, $expected];
     }
+
+    public static function provideTwoClassesInOneNamespace(): array
+    {
+        $code = <<<'CODE'
+<?php 
+namespace Example; 
+class FirstClass
+{
+}
+class SecondClass
+{
+}
+CODE;
+
+        $expected = new TokenCollection([
+            new TokenOpenTag('<?php'),
+            new TokenWhitespace(" \n"),
+            new TokenNamespace(),
+            new TokenWhitespace(' '),
+            new TokenString('Example'),
+            new TokenGeneric(';'),
+            new TokenWhitespace(" \n"),
+            new TokenClass(),
+            new TokenWhitespace(' '),
+            new TokenString('FirstClass'),
+            new TokenWhitespace("\n"),
+            new TokenGeneric('{'),
+            new TokenWhitespace("\n"),
+            new TokenGeneric('}'),
+            new TokenWhitespace("\n"),
+            new TokenClass(),
+            new TokenWhitespace(' '),
+            new TokenString('SecondClass'),
+            new TokenWhitespace("\n"),
+            new TokenGeneric('{'),
+            new TokenWhitespace("\n"),
+            new TokenGeneric('}'),
+        ]);
+
+        return [$code, $expected];
+    }
+
+    public static function provideThreeClassesInOneNamespace(): array
+    {
+        $code = <<<'CODE'
+<?php 
+namespace Example; 
+class FirstClass
+{
+}
+class SecondClass
+{
+}
+class ThirdClass
+{
+}
+CODE;
+
+        $expected = new TokenCollection([
+            new TokenOpenTag('<?php'),
+            new TokenWhitespace(" \n"),
+            new TokenNamespace(),
+            new TokenWhitespace(' '),
+            new TokenString('Example'),
+            new TokenGeneric(';'),
+            new TokenWhitespace(" \n"),
+            new TokenClass(),
+            new TokenWhitespace(' '),
+            new TokenString('FirstClass'),
+            new TokenWhitespace("\n"),
+            new TokenGeneric('{'),
+            new TokenWhitespace("\n"),
+            new TokenGeneric('}'),
+            new TokenWhitespace("\n"),
+            new TokenClass(),
+            new TokenWhitespace(' '),
+            new TokenString('SecondClass'),
+            new TokenWhitespace("\n"),
+            new TokenGeneric('{'),
+            new TokenWhitespace("\n"),
+            new TokenGeneric('}'),
+            new TokenWhitespace("\n"),
+            new TokenClass(),
+            new TokenWhitespace(' '),
+            new TokenString('ThirdClass'),
+            new TokenWhitespace("\n"),
+            new TokenGeneric('{'),
+            new TokenWhitespace("\n"),
+            new TokenGeneric('}'),
+        ]);
+
+        return [$code, $expected];
+    }
+
+    public static function provideShortClass(): array
+    {
+        $code = <<<'CODE'
+<?php 
+namespace Example; 
+class ShortClass{}
+CODE;
+
+        $expected = new TokenCollection([
+            new TokenOpenTag('<?php'),
+            new TokenWhitespace(" \n"),
+            new TokenNamespace(),
+            new TokenWhitespace(' '),
+            new TokenString('Example'),
+            new TokenGeneric(';'),
+            new TokenWhitespace(" \n"),
+            new TokenClass(),
+            new TokenWhitespace(' '),
+            new TokenString('ShortClass'),
+            new TokenGeneric('{'),
+            new TokenGeneric('}'),
+        ]);
+
+        return [$code, $expected];
+    }
 }

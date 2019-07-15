@@ -7,7 +7,7 @@ namespace Typhped\Structure\Statement;
 use Typhped\Structure\Token\TokenName;
 use Webmozart\Assert\Assert;
 
-class StmtClass implements StmtStructure
+class StmtStruct implements StmtStructure
 {
     /** @var TokenName */
     private $name;
@@ -18,11 +18,15 @@ class StmtClass implements StmtStructure
     /** @var array */
     private $interfaces;
 
-    public function __construct(TokenName $name, ?TokenName $parentName, array $interfaces)
+    /** @var array */
+    private $statements;
+
+    public function __construct(TokenName $name, ?TokenName $parentName, array $interfaces, array $statements)
     {
         $this->name       = $name;
         $this->parentName = $parentName;
         $this->interfaces = $interfaces;
+        $this->statements = $statements;
 
         Assert::allIsInstanceOf($interfaces, TokenName::class);
     }
@@ -50,5 +54,10 @@ class StmtClass implements StmtStructure
     public function getInterfaces(): array
     {
         return $this->interfaces;
+    }
+
+    public function getStatements(): array
+    {
+        return $this->statements;
     }
 }
