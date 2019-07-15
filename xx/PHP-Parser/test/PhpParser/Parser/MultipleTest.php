@@ -73,6 +73,16 @@ class MultipleTest extends ParserTest
                     ))
                 ]
             ],
+	        [
+		        // PHP 7 only code
+		        '<?php struct Test { function function() {} }',
+		        $this->getPrefer5(),
+		        [
+			        new Stmt\Class_('Test', ['stmts' => [
+				        new Stmt\ClassMethod('function')
+			        ]]),
+		        ]
+	        ],
         ];
     }
 
