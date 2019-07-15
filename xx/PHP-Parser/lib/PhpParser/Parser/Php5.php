@@ -17,7 +17,7 @@ use PhpParser\Node\Stmt;
  */
 class Php5 extends \PhpParser\ParserAbstract
 {
-    protected $tokenToSymbolMapSize = 394;
+    protected $tokenToSymbolMapSize = 395;
     protected $actionTableSize = 1079;
     protected $gotoTableSize = 650;
 
@@ -231,7 +231,7 @@ class Php5 extends \PhpParser\ParserAbstract
           122,  123,  124,  125,  126,  127,  128,  129,  130,  131,
           132,  133,  134,  135,  136,  137,  138,  139,  159,  159,
           159,  159,  159,  159,  140,  141,  142,  143,  144,  145,
-          146,  147,  148,  149
+          146,  147,  148,  149,  159
     );
 
     protected $action = array(
