@@ -219,7 +219,12 @@ pub enum Expr {
 pub enum Value {
     Bool(bool),
     Null,
+    Number(Number),
+}
+
+pub enum Number {
     Int(i32),
+    Float(f64),
 }
 
 pub enum Visibility {

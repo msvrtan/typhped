@@ -3,7 +3,6 @@ use crate::ast::*;
 
 grammar;
 
-
 pub File: File = {
     "<?php"                       => File::new(vec![Structure::OpenTag]),
     "<?php"<b:Structures>         => { let mut list = vec![Structure::OpenTag]; list.extend(b);  return File::new(list);},
@@ -97,11 +96,13 @@ pub Visibility: Visibility ={
 }
 
 pub Value: Value ={
-    "true"         => Value::Bool(true),
-    "false"        => Value::Bool(false),
-    "null"         => Value::Null,
-    r"[0-9]+"      => Value::Int(i32::from_str(<>).unwrap())
+    "true"                     => Value::Bool(true),
+    "false"                    => Value::Bool(false),
+    "null"                     => Value::Null,
+    r"[0-9]+"                  => Value::Number(Number::Int(i32::from_str(<>).unwrap())),
+    r"([0-9]+)\.([0-9]+)"      => Value::Number(Number::Float(f64::from_str(<>).unwrap())),
 }
+
 
 pub MethodArgumentList: Vec<MethodArgument> = {
     "()"                               => vec![],
