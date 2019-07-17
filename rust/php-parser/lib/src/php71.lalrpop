@@ -1,0 +1,183 @@
+use std::str::FromStr;
+use crate::ast::*;
+
+grammar;
+
+
+pub File: File = {
+    "<?php"                       => File::new(vec![Structure::OpenTag]),
+    "<?php"<b:Structures>         => { let mut list = vec![Structure::OpenTag]; list.extend(b);  return File::new(list);},
+}
+
+pub Structures: Vec<Structure>={
+    Structure                          => vec![<>],
+    <a:Structure><b:Structures>   => { let mut list = vec![a]; list.extend(b); return list;},
+}
+
+pub Structure: Structure = {
+    "declare(strict_types=0);"    => Structure::Declare(Declare::StrictTypesOff),
+    "declare(strict_types=1);"    => Structure::Declare(Declare::StrictTypesOn),
+    ClassDeclarationStatement     => Structure::Class(<>),
+    Namespace                     => Structure::Namespace(<>),
+    Import                        => Structure::Import(<>),
+}
+
+pub Namespace: String = {
+    "namespace" <n:NamespaceName>";" => n
+}
+
+pub NamespaceName: String = {
+    <s:r"[a-zA-Z]+">                   => String::from_str(s).unwrap(),
+    <s:r"[a-zA-Z]+(\\[a-zA-Z]+)+">     => String::from_str(s).unwrap(),
+}
+
+
+pub Import: String = {
+    "use" <n:ImportName>";" => n
+}
+
+pub ImportName: String = {
+    <s:r"[a-zA-Z]+">                   => String::from_str(s).unwrap(),
+    <s:r"[a-zA-Z]+(\\[a-zA-Z]+)+">     => String::from_str(s).unwrap(),
+}
+
+
+pub ClassDeclarationStatement: ClassDeclarationStatement = {
+    ClassEntryType ClassName ClassStatementList                                     =>  ClassDeclarationStatement::simple(<>),
+    ClassEntryType ClassName ClassExtendsFrom ClassStatementList                    =>  ClassDeclarationStatement::with_parent(<>),
+    ClassEntryType ClassName ClassImplements ClassStatementList                     =>  ClassDeclarationStatement::with_interface(<>),
+    ClassEntryType ClassName ClassExtendsFrom ClassImplements ClassStatementList    =>  ClassDeclarationStatement::with_parent_and_interface(<>),
+}
+
+pub ClassEntryType: ClassEntryType = {
+    "abstract class"                        => ClassEntryType::Abstract,
+    "final class"                           => ClassEntryType::Final,
+    "class"                                 => ClassEntryType::Class,
+};
+
+pub ClassStatementList: Vec<ClassStatement> = {
+    "{}"                                    => vec![],
+    "{"<n:ClassStatements>"}"               => n,
+
+}
+
+pub ClassStatements: Vec<ClassStatement> = {
+    ClassStatement                          => vec![<>],
+    <a:ClassStatement><b:ClassStatements>   => { let mut list = vec![a]; list.extend(b); return list;},
+
+}
+
+pub ClassStatement: ClassStatement = {
+    <t:TypeOf> <n:Variable>";"                              => ClassStatement::Property(Property::private(t,n)),
+    <v:Visibility> <t:TypeOf> <n:Variable>";"               => ClassStatement::Property(Property::new(v,t,n)),
+
+    "use" <name:ClassName>";"                               => ClassStatement::Trait(name),
+
+    "const" <n:Const>"="<value:Value>";"                    => ClassStatement::Const(Const::public(n,value)),
+    <v:Visibility> "const" <n:Const>"="<value:Value>";"     => ClassStatement::Const(Const::new(v,n,value)),
+
+    "function" <n:MethodName><a:MethodArgumentList><s:MethodStatementList>                                          => ClassStatement::Method(Method::public(n,a,None,s)),
+    <v:Visibility> "function" <n:MethodName><a:MethodArgumentList><s:MethodStatementList>                           => ClassStatement::Method(Method::new(v,n,a,None,s)),
+
+    "function" <n:MethodName><a:MethodArgumentList><r:ReturnType><s:MethodStatementList>                            => ClassStatement::Method(Method::public(n,a,r,s)),
+    <v:Visibility> "function" <n:MethodName><a:MethodArgumentList><r:ReturnType><s:MethodStatementList>             => ClassStatement::Method(Method::new(v,n,a,r,s)),
+
+}
+
+MethodName: String = <s:r"[a-zA-Z]+">             => String::from_str(s).unwrap();
+Const: String = <s:r"[a-zA-Z]+">                  => String::from_str(s).unwrap();
+TypeOf: String = <s:r"[a-zA-Z]+">                 => String::from_str(s).unwrap();
+Variable: String = <s:r"\$[a-zA-Z]+">             => String::from_str(s).unwrap();
+
+
+pub Visibility: Visibility ={
+    "public"        => Visibility::Public,
+    "protected"     => Visibility::Protected,
+    "private"       => Visibility::Private,
+}
+
+pub Value: Value ={
+    "true"         => Value::Bool(true),
+    "false"        => Value::Bool(false),
+    "null"         => Value::Null,
+    r"[0-9]+"      => Value::Int(i32::from_str(<>).unwrap())
+}
+
+pub MethodArgumentList: Vec<MethodArgument> = {
+    "()"                               => vec![],
+    "("<n:MethodArguments>")"          => n,
+}
+
+
+pub MethodArguments = Comma<MethodArgument>;
+
+
+pub MethodArgument: MethodArgument = {
+    <t:TypeOf> <n:Variable>           => MethodArgument::new(t,n),
+}
+
+pub ReturnType: Option<String> = {
+    ""                                => None,
+    ":"<r:ClassName>                  => Some(r),
+}
+
+
+
+pub MethodStatementList: Vec<MethodStatement> = {
+    "{}"                              => vec![],
+    "{"<n:MethodStatements>"}"        => n,
+}
+
+
+pub MethodStatements: Vec<MethodStatement> = {
+    MethodStatement                           => vec![<>],
+    <a:MethodStatement><b:MethodStatements>   => { let mut list = vec![a]; list.extend(b); return list;},
+}
+
+
+pub MethodStatement: MethodStatement = {
+    <expr:Expr>";"                            => MethodStatement::Expr(expr),
+}
+
+pub Expr: Expr = {
+    <p:ObjectProperty>"="<v:Variable>         => Expr::Assignement(p,v),
+    <v1:Variable>"="<v2:Variable>             => Expr::Assignement(v1,v2),
+    "return"<v:Variable>                      => Expr::Return(v),
+    "return"<p:ObjectProperty>                => Expr::Return(p),
+}
+ObjectProperty: String = <s:r"\$this->[a-zA-Z]+">              => String::from_str(s).unwrap();
+
+
+pub ClassExtendsFrom: String = {
+    "extends" <n:ParentClassName>           => n,
+}
+
+pub ClassImplements: Vec<String> = {
+    "implements" <n:ClassNames>       => n,
+}
+
+pub ClassNames = Comma<ClassName>;
+
+Comma<T>: Vec<T> = { // (0)
+    <v:(<T> ",")*> <e:T?> => match e { // (1)
+        None=> v,
+        Some(e) => {
+            let mut v = v;
+            v.push(e);
+            v
+        }
+    }
+};
+
+
+pub ParentClassName: String = {
+    <s:r"[a-zA-Z]+">                   => String::from_str(s).unwrap(),
+    <s:r"[a-zA-Z]+(\\[a-zA-Z]+)+">     => String::from_str(s).unwrap(),
+    <s:r"(\\[a-zA-Z]+)+">     => String::from_str(s).unwrap(),
+}
+
+
+
+ClassName: String = <s:r"[a-zA-Z]+">              => String::from_str(s).unwrap();
+
+
