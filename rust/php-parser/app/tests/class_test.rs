@@ -19,18 +19,11 @@ fn empty_class_definitions() {
 #[test]
 fn parent_class_definitions() {
     assert_ok("class RegisterUser extends BaseCommand{}");
-    assert_ok("abstract class RegisterUser extends BaseCommand{}");
-    assert_ok("final class RegisterUser extends BaseCommand{}");
-    assert_ok("class RegisterUser extends BaseCommand{}");
     assert_ok("class RegisterUser extends Vendor\\BaseCommand{}");
     assert_ok("class RegisterUser extends \\Vendor\\BaseCommand{}");
 }
 #[test]
 fn single_interface_class_definitions() {
-    assert_ok("class RegisterUser implements SomeInterface{}");
-    assert_ok("abstract class RegisterUser implements SomeInterface{}");
-    assert_ok("final class RegisterUser implements SomeInterface{}");
-    assert_ok("class RegisterUser implements SomeInterface{}");
     assert_ok("class RegisterUser implements SomeInterface{}");
     assert_ok("class RegisterUser implements Vendor\\SomeInterface{}");
     assert_ok("class RegisterUser implements \\Vendor\\SomeInterface{}");
@@ -39,15 +32,9 @@ fn single_interface_class_definitions() {
 #[test]
 fn parent_and_single_interface_class_definitions() {
     assert_ok("class RegisterUser extends BaseCommand implements SomeInterface{}");
-    assert_ok("abstract class RegisterUser extends BaseCommand implements SomeInterface{}");
-    assert_ok("final class RegisterUser extends BaseCommand implements SomeInterface{}");
-    assert_ok("class RegisterUser extends BaseCommand implements SomeInterface{}");
 }
 #[test]
 fn multi_interface_class_definitions() {
-    assert_ok("class RegisterUser implements SomeInterface, AnotherInterface{}");
-    assert_ok("abstract class RegisterUser implements SomeInterface, AnotherInterface{}");
-    assert_ok("final class RegisterUser implements SomeInterface, AnotherInterface{}");
     assert_ok("class RegisterUser implements SomeInterface, AnotherInterface{}");
 }
 #[test]
@@ -55,13 +42,7 @@ fn parent_and_multi_interface_class_definitions() {
     assert_ok(
         "class RegisterUser extends BaseCommand implements SomeInterface, AnotherInterface{}",
     );
-    assert_ok("abstract class RegisterUser extends BaseCommand implements SomeInterface, AnotherInterface{}");
-    assert_ok(
-        "final class RegisterUser extends BaseCommand implements SomeInterface, AnotherInterface{}",
-    );
-    assert_ok(
-        "class RegisterUser extends BaseCommand implements SomeInterface, AnotherInterface{}",
-    );
+
 }
 
 #[test]
