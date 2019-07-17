@@ -4,10 +4,16 @@
 DONE:
  - process namespace
  - process imports
-
-IN PROGRESS:
  - parent can have '\'
+ - interfaces can have '\'
+ 
+IN PROGRESS:
+ - assignement operators
  
 
 TODO:
- - interfaces can have '\'
+ - casting
+ - if, elseif, else
+ - for
+ - foreach
+ 
