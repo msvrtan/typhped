@@ -32,6 +32,8 @@ fn single_interface_class_definitions() {
     assert_ok("final class RegisterUser implements SomeInterface{}");
     assert_ok("class RegisterUser implements SomeInterface{}");
     assert_ok("class RegisterUser implements SomeInterface{}");
+    assert_ok("class RegisterUser implements Vendor\\SomeInterface{}");
+    assert_ok("class RegisterUser implements \\Vendor\\SomeInterface{}");
 }
 
 #[test]

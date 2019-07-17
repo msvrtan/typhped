@@ -154,7 +154,7 @@ pub ClassExtendsFrom: String = {
 }
 
 pub ClassImplements: Vec<String> = {
-    "implements" <n:ClassNames>       => n,
+    "implements" <n:ImplementsInterfaceNames>       => n,
 }
 
 pub ClassNames = Comma<ClassName>;
@@ -172,6 +172,13 @@ Comma<T>: Vec<T> = { // (0)
 
 
 pub ParentClassName: String = {
+    <s:r"[a-zA-Z]+">                   => String::from_str(s).unwrap(),
+    <s:r"[a-zA-Z]+(\\[a-zA-Z]+)+">     => String::from_str(s).unwrap(),
+    <s:r"(\\[a-zA-Z]+)+">     => String::from_str(s).unwrap(),
+}
+pub ImplementsInterfaceNames = Comma<ImplementsInterfaceName>;
+
+pub ImplementsInterfaceName: String = {
     <s:r"[a-zA-Z]+">                   => String::from_str(s).unwrap(),
     <s:r"[a-zA-Z]+(\\[a-zA-Z]+)+">     => String::from_str(s).unwrap(),
     <s:r"(\\[a-zA-Z]+)+">     => String::from_str(s).unwrap(),
