@@ -1,0 +1,63 @@
+use std::str::FromStr;
+use crate::ast_expr::*;
+
+grammar;
+
+pub Expr: Expr ={
+    Variable                                             => <>,
+    Value                                                => <>,
+    Variable ArithmeticOperation Expr                    => Expr::operation(<>),
+    Value ArithmeticOperation Expr                       => Expr::operation(<>),
+    "("<Expr>")"                                         => Expr::Brackets(Box::new(<>)),
+    "("<a:Expr>")"<op:ArithmeticOperation><b:Expr>       => Expr::operation(a,op,b),
+    Variable ComparisonOperation Expr                    => Expr::comparison(<>),
+    Value ComparisonOperation Expr                       => Expr::comparison(<>),
+    Variable AssignmentOperation Expr                    => Expr::assignement(<>),
+
+}
+
+
+
+pub ArithmeticOperation: ArithmeticOperation = {
+    "+"         => ArithmeticOperation::Add,
+    "-"         => ArithmeticOperation::Sub,
+    "*"         => ArithmeticOperation::Mul,
+    "/"         => ArithmeticOperation::Div,
+}
+
+pub ComparisonOperation: ComparisonOperation = {
+    "=="        =>  ComparisonOperation::IsEqual,
+    "<"         =>  ComparisonOperation::IsSmaller,
+    ">"         =>  ComparisonOperation::IsGreater,
+    ">="        =>  ComparisonOperation::IsGreaterOrEqual,
+    "==="       =>  ComparisonOperation::IsIdentical,
+    "!="        =>  ComparisonOperation::IsNotEqual,
+    "<>"        =>  ComparisonOperation::IsNotEqual,
+    "!=="       =>  ComparisonOperation::IsNotIdentical,
+    "<="        =>  ComparisonOperation::IsSmallerOrEqual,
+    "<=>"       =>  ComparisonOperation::Spaceship,
+}
+
+pub AssignmentOperation: AssignmentOperation = {
+    "="         =>  AssignmentOperation::Assign,
+}
+
+
+
+Variable: Expr = <s:r"\$[a-zA-Z]+">            => Expr::Variable(String::from_str(s).unwrap());
+
+pub Value: Expr = {
+    <s:r"[a-zA-Z]+">                           => Expr::Value(Value::String(String::from_str(s).unwrap())),
+    <s:r"[0-9]+">                              => Expr::Value(Value::Int(u32::from_str(s).unwrap())),
+    <s:r"[0-9]+\.[0-9]+">                      => Expr::Value(Value::Float(f64::from_str(s).unwrap())),
+}
+
+pub ImplementsInterfaceName: String = {
+    <s:r"[a-zA-Z]+">                           => String::from_str(s).unwrap(),
+    <s:r"[a-zA-Z]+(\\[a-zA-Z]+)+">             => String::from_str(s).unwrap(),
+    <s:r"(\\[a-zA-Z]+)+">                      => String::from_str(s).unwrap(),
+}
+
+ClassName: String = <s:r"[a-zA-Z]+">           => String::from_str(s).unwrap();
+
+

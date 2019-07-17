@@ -13,5 +13,6 @@ fn node_finder() {
 
     let _contents = fs::read_to_string(filename).expect("Something went wrong reading the file");
 
-    //assert_file_ok(_contents.as_str());
+    println!("{}", &_contents);
+    assert_file_ok(_contents.as_str());
 }
