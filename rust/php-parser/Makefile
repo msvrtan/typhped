@@ -24,3 +24,6 @@ test:
 
 wip:
 	git add . && git commit -am 'wip'
+
+
+recomplile: format build format check run test
