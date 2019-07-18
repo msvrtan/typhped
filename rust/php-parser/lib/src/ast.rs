@@ -3,6 +3,7 @@
 type NamespaceName = String;
 type ImportName = String;
 
+#[derive(Debug)]
 pub struct File {
     pub content: Vec<Structure>,
 }
@@ -13,6 +14,7 @@ impl File {
     }
 }
 
+#[derive(Debug)]
 pub enum Structure {
     OpenTag,
     //CloseTag,
@@ -22,11 +24,12 @@ pub enum Structure {
     Class(ClassDeclarationStatement),
 }
 
+#[derive(Debug)]
 pub enum Declare {
     StrictTypesOn,
     StrictTypesOff,
 }
-
+#[derive(Debug)]
 pub struct ClassDeclarationStatement {
     pub entry_type: ClassEntryType,
     pub name: String,
@@ -94,12 +97,14 @@ impl ClassDeclarationStatement {
     }
 }
 
+#[derive(Debug)]
 pub enum ClassEntryType {
     Class,
     Abstract,
     Final,
 }
 
+#[derive(Debug)]
 pub enum ClassStatement {
     Const(Const),
     Trait(String),
@@ -107,6 +112,7 @@ pub enum ClassStatement {
     Method(Method),
 }
 
+#[derive(Debug)]
 pub struct Const {
     pub visibility: Visibility,
     pub name: String,
@@ -130,6 +136,7 @@ impl Const {
     }
 }
 
+#[derive(Debug)]
 pub struct Property {
     pub visibility: Visibility,
     pub type_of: String,
@@ -153,6 +160,7 @@ impl Property {
     }
 }
 
+#[derive(Debug)]
 pub struct Method {
     pub visibility: Visibility,
     pub name: String,
@@ -193,6 +201,7 @@ impl Method {
     }
 }
 
+#[derive(Debug)]
 pub struct MethodArgument {
     pub type_of: Option<String>,
     pub name: String,
@@ -207,26 +216,31 @@ impl MethodArgument {
     }
 }
 
+#[derive(Debug)]
 pub enum MethodStatement {
     Expr(Expr),
 }
 
+#[derive(Debug)]
 pub enum Expr {
     Assignement(String, String),
     Return(String),
 }
 
+#[derive(Debug)]
 pub enum Value {
     Bool(bool),
     Null,
     Number(Number),
 }
 
+#[derive(Debug)]
 pub enum Number {
     Int(i32),
     Float(f64),
 }
 
+#[derive(Debug)]
 pub enum Visibility {
     Public,
     Protected,
