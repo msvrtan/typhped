@@ -17,6 +17,49 @@ fn empty_class_definitions() {
 }
 
 #[test]
+fn empty_class_body1() {
+    assert_ok(
+        "
+        class RegisterUser
+        {}
+        ",
+    );
+}
+
+#[test]
+fn empty_class_body2() {
+    assert_ok(
+        "
+        class RegisterUser
+        { }
+        ",
+    );
+}
+
+#[test]
+fn empty_class_body3() {
+    assert_ok(
+        "
+        class RegisterUser
+        {
+}
+        ",
+    );
+}
+#[test]
+fn empty_class_body4() {
+    assert_ok(
+        "
+        class RegisterUser
+        {
+
+
+        }
+        ",
+    );
+}
+
+#[test]
 fn parent_class_definitions() {
     assert_ok("class RegisterUser extends BaseCommand{}");
     assert_ok("class RegisterUser extends Vendor\\BaseCommand{}");
@@ -42,7 +85,6 @@ fn parent_and_multi_interface_class_definitions() {
     assert_ok(
         "class RegisterUser extends BaseCommand implements SomeInterface, AnotherInterface{}",
     );
-
 }
 
 #[test]

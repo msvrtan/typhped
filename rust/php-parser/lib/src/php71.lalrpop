@@ -56,6 +56,7 @@ pub ClassEntryType: ClassEntryType = {
 
 pub ClassStatementList: Vec<ClassStatement> = {
     "{}"                                    => vec![],
+    "{""}"                                    => vec![],
     "{"<n:ClassStatements>"}"               => n,
 
 }
